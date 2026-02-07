@@ -1,8 +1,9 @@
 from window import Window
-from line import Line
 from point import Point
 from random import randint
 from cell import Cell
+from maze import Maze
+from tkinter import Tk, BOTH, Frame
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -14,12 +15,21 @@ def create_random_point_on_screen() -> Point:
 
 win = Window(SCREEN_WIDTH, SCREEN_HEIGHT, "XD")
 
-cell_one = Cell(win)
-cell_two = Cell(win)
+# win.root.geometry("800x600")  # You want the size of the app to be 500x500
+# # win.root.resizable(False, False)
 
-cell_one.draw(10, 10, 50, 50)
-cell_two.draw(50, 50, 80, 80)
+# back = Frame(master=win.root, bg="white")
+# back.pack_propagate(True)
+# back.pack(expand=True)
 
-cell_one.draw_move(cell_two)
+# cell_one = Cell(win)
+# cell_two = Cell(win)
+
+# cell_one.draw(10, 10, 50, 50)
+# cell_two.draw(50, 50, 80, 80)
+
+# cell_one.draw_move(cell_two)
+
+my_maze = Maze(2, 2, 30, 30, 10, 10, win)
 
 win.wait_for_close()
