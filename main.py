@@ -30,6 +30,7 @@ win = Window(SCREEN_WIDTH, SCREEN_HEIGHT, "XD")
 
 # cell_one.draw_move(cell_two)
 
-my_maze = Maze(2, 2, 10, 10, 20, 20, win)
+my_maze = Maze(2, 2, 10, 5, 20, 20, win)
+
 
 win.wait_for_close()

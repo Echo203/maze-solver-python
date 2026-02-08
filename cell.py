@@ -14,6 +14,7 @@ class Cell:
         self.__y1 = -1
         self.__y2 = -1
         self.__win = window
+        self.visited = False
 
     def get_coords(self):
         return [self.__x1, self.__y1, self.__x2, self.__y2]
