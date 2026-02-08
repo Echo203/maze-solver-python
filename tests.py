@@ -20,13 +20,26 @@ class Tests(unittest.TestCase):
         num_cols = 12
         num_rows = 10
         m1 = Maze(0, 0, num_cols, num_rows, 10, 10)
-        m1._Maze__break_entrance_and_exit()
         self.assertEqual(
             m1._Maze__cells[0][0].has_top_wall,
             False,
         )
         self.assertEqual(
             m1._Maze__cells[num_rows - 1][num_cols - 1].has_bottom_wall,
+            False,
+        )
+
+    def test_maze_reset_visited(self):
+        num_cols = 12
+        num_rows = 10
+        m1 = Maze(0, 0, num_cols, num_rows, 10, 10)
+        m1._Maze__reset_cells_visited()
+        self.assertEqual(
+            m1._Maze__cells[5][7].visited,
+            False,
+        )
+        self.assertEqual(
+            m1._Maze__cells[1][9].visited,
             False,
         )
 

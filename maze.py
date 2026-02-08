@@ -1,6 +1,6 @@
 from cell import Cell
-from time import sleep
 from random import seed as random_from_seed, randrange
+from time import sleep
 
 
 class Maze:
@@ -29,6 +29,7 @@ class Maze:
         if not seed:
             self.seed = random_from_seed(seed)
         self.__breake_walls_r(0, 0)
+        self.__reset_cells_visited()
 
     def __create_cells(self):
         for i in range(self.num_col):
@@ -58,7 +59,7 @@ class Maze:
         if not self.__win:
             return
         self.__win.redraw()
-        # sleep(0.05)
+        sleep(0.05)
 
     def __break_entrance_and_exit(self):
         self.__cells[0][0].has_top_wall = False
@@ -116,3 +117,82 @@ class Maze:
                     i, picked_cell_coords[0], j, picked_cell_coords[1]
                 )
                 self.__breake_walls_r(picked_cell_coords[0], picked_cell_coords[1])
+
+    def __reset_cells_visited(self):
+        for i in range(self.num_col):
+            for j in range(self.num_row):
+                self.__cells[i][j].visited = False
+
+    def solve(self):
+        return self.__solve_r(0, 0)
+
+    def __solve_r(self, x, y):
+        self.__animate()
+
+        current_cell: Cell = self.__cells[x][y]
+        current_cell.visited = True
+
+        if current_cell == self.__cells[self.num_col - 1][self.num_row - 1]:
+            return True
+
+        # Check left
+        if (
+            x != 0
+            and not current_cell.has_left_wall
+            and not self.__cells[x - 1][y].visited
+        ):
+            neighbour = self.__cells[x - 1][y]
+            current_cell.draw_move(neighbour)
+            result = self.__solve_r(x - 1, y)
+
+            if result:
+                return True
+
+            current_cell.draw_move(neighbour, True)
+
+        # Check top
+        if (
+            y != 0
+            and not current_cell.has_top_wall
+            and not self.__cells[x][y - 1].visited
+        ):
+            neighbour = self.__cells[x][y - 1]
+            current_cell.draw_move(neighbour)
+            result = self.__solve_r(x, y - 1)
+
+            if result:
+                return True
+
+            current_cell.draw_move(neighbour, True)
+
+        # Check right
+        if (
+            (x != self.num_col - 1)
+            and not current_cell.has_right_wall
+            and not self.__cells[x + 1][y].visited
+        ):
+            neighbour = self.__cells[x + 1][y]
+            current_cell.draw_move(neighbour)
+            result = self.__solve_r(x + 1, y)
+
+            if result:
+                return True
+
+            current_cell.draw_move(neighbour, True)
+
+        # Check bottom
+        if (
+            (y != self.num_row - 1)
+            and not current_cell.has_bottom_wall
+            and not self.__cells[x][y + 1].visited
+        ):
+            neighbour = self.__cells[x][y + 1]
+            current_cell.draw_move(neighbour)
+            result = self.__solve_r(x, y + 1)
+
+            if result:
+                return True
+
+            current_cell.draw_move(neighbour, True)
+
+        return False

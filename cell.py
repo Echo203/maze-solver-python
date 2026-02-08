@@ -28,10 +28,6 @@ class Cell:
         self.__x2 = x2
         self.__y2 = y2
 
-        if x1 == 2 and y1 == 2:
-            print("drawing 0,0")
-            print(f"self.has_top_wall: {self.has_top_wall}")
-
         if not self.__win:
             return
 
@@ -64,7 +60,7 @@ class Cell:
             )
 
     def draw_move(self, to_cell: Self, undo=False):
-        color = "red"
+        color = "blue"
         if undo:
             color = "gray"
 
