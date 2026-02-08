@@ -4,7 +4,7 @@ from typing import Self
 
 
 class Cell:
-    def __init__(self, window: Window) -> None:
+    def __init__(self, window: Window | None = None) -> None:
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -27,22 +27,48 @@ class Cell:
         self.__x2 = x2
         self.__y2 = y2
 
+        if x1 == 2 and y1 == 2:
+            print("drawing 0,0")
+            print(f"self.has_top_wall: {self.has_top_wall}")
+
+        if not self.__win:
+            return
+
         if self.has_bottom_wall:
             self.__win.draw_line(create_line_with_coordinates(x1, y2, x2, y2))
+        else:
+            self.__win.draw_line(
+                create_line_with_coordinates(x1, y2, x2, y2), "#d9d9d9"
+            )
 
         if self.has_left_wall:
             self.__win.draw_line(create_line_with_coordinates(x1, y1, x1, y2))
+        else:
+            self.__win.draw_line(
+                create_line_with_coordinates(x1, y1, x1, y2), "#d9d9d9"
+            )
 
         if self.has_top_wall:
             self.__win.draw_line(create_line_with_coordinates(x1, y1, x2, y1))
+        else:
+            self.__win.draw_line(
+                create_line_with_coordinates(x1, y1, x2, y1), "#d9d9d9"
+            )
 
         if self.has_right_wall:
             self.__win.draw_line(create_line_with_coordinates(x2, y1, x2, y2))
+        else:
+            self.__win.draw_line(
+                create_line_with_coordinates(x2, y1, x2, y2), "#d9d9d9"
+            )
 
     def draw_move(self, to_cell: Self, undo=False):
         color = "red"
         if undo:
             color = "gray"
+
+        if not self.__win:
+            return
 
         center_one = self.get_center()
         center_two = to_cell.get_center()

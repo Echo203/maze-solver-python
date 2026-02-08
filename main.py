@@ -6,7 +6,7 @@ from maze import Maze
 from tkinter import Tk, BOTH, Frame
 
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_HEIGHT = 800
 
 
 def create_random_point_on_screen() -> Point:
@@ -30,6 +30,6 @@ win = Window(SCREEN_WIDTH, SCREEN_HEIGHT, "XD")
 
 # cell_one.draw_move(cell_two)
 
-my_maze = Maze(2, 2, 30, 30, 10, 10, win)
+my_maze = Maze(2, 2, 10, 10, 20, 20, win)
 
 win.wait_for_close()
