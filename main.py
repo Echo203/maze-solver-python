@@ -30,8 +30,10 @@ win = Window(SCREEN_WIDTH, SCREEN_HEIGHT, "XD")
 
 # cell_one.draw_move(cell_two)
 
+# Seeds:
+# 498 <- awfull for dfs on 35x35
 my_maze = Maze(2, 2, 10, 10, 20, 20, win, 498)
-my_maze.solve()
+my_maze.solve("bfs")
 
 
 win.wait_for_close()

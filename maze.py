@@ -26,8 +26,8 @@ class Maze:
         self.__create_cells()
         self.__break_entrance_and_exit()
         self.seed = seed
-        if not seed:
-            self.seed = random_from_seed(seed)
+        if seed:
+            random_from_seed(seed)
         self.__breake_walls_r(0, 0)
         self.__reset_cells_visited()
 
@@ -55,11 +55,12 @@ class Maze:
         )
         self.__animate()
 
-    def __animate(self):
+    def __animate(self, delay=False):
         if not self.__win:
             return
         self.__win.redraw()
-        sleep(0.05)
+        if delay:
+            sleep(0.05)
 
     def __break_entrance_and_exit(self):
         self.__cells[0][0].has_top_wall = False
@@ -123,11 +124,15 @@ class Maze:
             for j in range(self.num_row):
                 self.__cells[i][j].visited = False
 
-    def solve(self):
-        return self.__solve_r(0, 0)
+    def solve(self, alg):
+        match alg:
+            case "dfs":
+                return self.__solver_dfs_r(0, 0)
+            case "bfs":
+                self.__solver_bfs_r(0, 0)
 
-    def __solve_r(self, x, y):
-        self.__animate()
+    def __solver_dfs_r(self, x, y):
+        self.__animate(True)
 
         current_cell: Cell = self.__cells[x][y]
         current_cell.visited = True
@@ -143,7 +148,7 @@ class Maze:
         ):
             neighbour = self.__cells[x - 1][y]
             current_cell.draw_move(neighbour)
-            result = self.__solve_r(x - 1, y)
+            result = self.__solver_dfs_r(x - 1, y)
 
             if result:
                 return True
@@ -158,7 +163,7 @@ class Maze:
         ):
             neighbour = self.__cells[x][y - 1]
             current_cell.draw_move(neighbour)
-            result = self.__solve_r(x, y - 1)
+            result = self.__solver_dfs_r(x, y - 1)
 
             if result:
                 return True
@@ -173,7 +178,7 @@ class Maze:
         ):
             neighbour = self.__cells[x + 1][y]
             current_cell.draw_move(neighbour)
-            result = self.__solve_r(x + 1, y)
+            result = self.__solver_dfs_r(x + 1, y)
 
             if result:
                 return True
@@ -188,7 +193,7 @@ class Maze:
         ):
             neighbour = self.__cells[x][y + 1]
             current_cell.draw_move(neighbour)
-            result = self.__solve_r(x, y + 1)
+            result = self.__solver_dfs_r(x, y + 1)
 
             if result:
                 return True
@@ -196,3 +201,81 @@ class Maze:
             current_cell.draw_move(neighbour, True)
 
         return False
+
+    def generate_list_of_moves_from_cell(self, x, y):
+        current_cell = self.__cells[x][y]
+        moves = []
+        # Check left
+        if (
+            x != 0
+            and not current_cell.has_left_wall
+            and not self.__cells[x - 1][y].visited
+        ):
+            moves.append((x - 1, y))
+
+        # Check top
+        if (
+            y != 0
+            and not current_cell.has_top_wall
+            and not self.__cells[x][y - 1].visited
+        ):
+            moves.append((x, y - 1))
+
+        # Check right
+        if (
+            (x != self.num_col - 1)
+            and not current_cell.has_right_wall
+            and not self.__cells[x + 1][y].visited
+        ):
+            moves.append((x + 1, y))
+
+        # Check bottom
+        if (
+            (y != self.num_row - 1)
+            and not current_cell.has_bottom_wall
+            and not self.__cells[x][y + 1].visited
+        ):
+            moves.append((x, y + 1))
+
+        return moves
+
+    def __bfs_backtracker(self, routes, entrance, exit):
+        # Start a list to represent path, starting at exit
+        path = [exit]
+
+        # Loop thorugh routes, till we get to the entrance
+        while path[-1] != entrance:
+            path.append(routes[path[-1]])
+
+        for i in range(len(path) - 1, 0, -1):
+            self.__animate(True)
+            cell = path[i]
+            next_cell = path[i - 1]
+            self.__cells[cell[0]][cell[1]].draw_move(
+                self.__cells[next_cell[0]][next_cell[1]]
+            )
+
+    def __solver_bfs_r(self, x, y):
+
+        exit_cell = (self.num_col - 1, self.num_row - 1)
+
+        parent = {}
+        queue = []
+        queue.append((x, y))
+
+        while queue:
+            self.__animate(True)
+
+            cell = queue.pop(0)
+            self.__cells[cell[0]][cell[1]].visited = True
+            if cell == exit_cell:
+                self.__bfs_backtracker(parent, (0, 0), exit_cell)
+                return
+            moves = self.generate_list_of_moves_from_cell(cell[0], cell[1])
+            for move in moves:
+                if move not in queue:
+                    self.__cells[cell[0]][cell[1]].draw_move(
+                        self.__cells[move[0]][move[1]], True
+                    )
+                    parent[move] = cell
+                    queue.append(move)
